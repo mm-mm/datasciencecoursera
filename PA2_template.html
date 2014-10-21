@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>NOAA Storm Dataset Analysis </title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<h1>NOAA Storm Dataset Analysis </h1>
+
+<p>Coursera/Data Science
+Reproducible Research, Peer Assessment #2
+M.M.  October 21, 2014</p>
+
+<h1>SYNOPSIS</h1>
+
+<p>In this study, NOAA Storm Data was downloaded and analyzed, with the objective of determining which event types have the greates health and economic impacts.  This documented dataset describes severe weather events in the United States from 1950 to 2011.  The strategy for analysis was to determine the relevant data, subset out the relevant columns, combine two columns (where values could be added), then aggregate by weather event types into compact dataframes, then sort and present the data in tabular and plotted formats.  By summing the top 10 of each category &ndash; injuries, fatalities, and damage, it was possible to determine that each of the top 10 lists describes about 80-90% of the impact of all events.  The correctness of data was validated by summing the relevant columns through transformations (subsetting, aggregating, sorting) and comparing to the sums of the original dataframe columns.  Data is presented in both table form and in bar plots.  By plotting the results, we can see in all three cases how the impact of event types rapidly decreases from a large number one impact toward a small tail.  The top event type with the largest impact to both human health and economic activity is clearly tornadoes, followed by a list which includes thunderstorm wind, floods/flash floods, heat/excessive heat, lightning and hail.  </p>
+
+<!-- rmarkdown v1 -->
+
+<p>(note:  parts of the Introduction and Data sections are largely copied from the Coursera assignment web page, with minor appropriate changes to both sections.)</p>
+
+<h1>Introduction</h1>
+
+<p>Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern.</p>
+
+<p>This project involves exploring the U.S. National Oceanic and Atmospheric Administration&#39;s (NOAA) storm database. This database tracks characteristics of major storms and weather events in the United States, including when and where they occur, as well as estimates of any fatalities, injuries, and property damage.  The dataset provided by the NOAA contains about 60 years of collected information spanning from 1950 to 2011.  The later years contain more complete entries, and the methods of information collection are described in detail in the two reference documents noted below (FAQ and NOAA data description).</p>
+
+<p>In particular, this analysis work answers two questions:  (1) Across the United States, which types of events are most harmful with respect to population health?  (2) Across the United States, which types of events have the greatest economic consequences?  The analyses provided in this document will focus on answering the two questions using the data from the database described above.  For brevity, visualization of data is accomplished using three plots.</p>
+
+<h1>Source Data Description</h1>
+
+<p>The data for this work comes in the form of a comma-separated-value file compressed via the bzip2 algorithm to reduce its size. This data file has a size of 47Mb.  Data was downloaded on 10/20/2014 from the web site:<br/>
+            <a href="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2">https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2</a>.  </p>
+
+<p>Documentation available:
+        National Weather Service Storm Data Documentation:
+            <a href="https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf">https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf</a>
+        National Climatic Data Center Storm Events FAQ:<br/>
+            <a href="https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf">https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf</a></p>
+
+<p>The events in the database start in the year 1950 and end in November 2011. In the earlier years of the database there are generally fewer events recorded, most likely due to a lack of good records. More recent years should be considered more complete.</p>
+
+<p>Code Chunk #1:
+Read the file into a dataframe df, initial investigation of df:</p>
+
+<pre><code class="r">setwd(&quot;C:/Users/Mark/Desktop&quot;)          #NOTE TO USERS:  CHANGE THIS TO YOUR DESIRED HOME DIRECTORY (or delete line)
+# read data into compressed bz2 file in home directory
+#download.file(&quot;https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2&quot;,&quot;StormData.csv.bz2&quot;)
+# note: above line commented out for faster debugging/processing (file manually downloaded separately into home directory)
+# unpack from .bz2 format and read datafile into dataframe df (raw data)
+df &lt;- read.csv(bzfile(&quot;StormData.csv.bz2&quot;))
+
+# explore dataframe
+#summary(df)  # COMMENTED OUT FOR REPORT
+dim(df)
+</code></pre>
+
+<pre><code>## [1] 902297     37
+</code></pre>
+
+<pre><code class="r">colnames(df)
+</code></pre>
+
+<pre><code>##  [1] &quot;STATE__&quot;    &quot;BGN_DATE&quot;   &quot;BGN_TIME&quot;   &quot;TIME_ZONE&quot;  &quot;COUNTY&quot;    
+##  [6] &quot;COUNTYNAME&quot; &quot;STATE&quot;      &quot;EVTYPE&quot;     &quot;BGN_RANGE&quot;  &quot;BGN_AZI&quot;   
+## [11] &quot;BGN_LOCATI&quot; &quot;END_DATE&quot;   &quot;END_TIME&quot;   &quot;COUNTY_END&quot; &quot;COUNTYENDN&quot;
+## [16] &quot;END_RANGE&quot;  &quot;END_AZI&quot;    &quot;END_LOCATI&quot; &quot;LENGTH&quot;     &quot;WIDTH&quot;     
+## [21] &quot;F&quot;          &quot;MAG&quot;        &quot;FATALITIES&quot; &quot;INJURIES&quot;   &quot;PROPDMG&quot;   
+## [26] &quot;PROPDMGEXP&quot; &quot;CROPDMG&quot;    &quot;CROPDMGEXP&quot; &quot;WFO&quot;        &quot;STATEOFFIC&quot;
+## [31] &quot;ZONENAMES&quot;  &quot;LATITUDE&quot;   &quot;LONGITUDE&quot;  &quot;LATITUDE_E&quot; &quot;LONGITUDE_&quot;
+## [36] &quot;REMARKS&quot;    &quot;REFNUM&quot;
+</code></pre>
+
+<pre><code class="r">head(df)
+</code></pre>
+
+<pre><code>##   STATE__           BGN_DATE BGN_TIME TIME_ZONE COUNTY COUNTYNAME STATE
+## 1       1  4/18/1950 0:00:00     0130       CST     97     MOBILE    AL
+## 2       1  4/18/1950 0:00:00     0145       CST      3    BALDWIN    AL
+## 3       1  2/20/1951 0:00:00     1600       CST     57    FAYETTE    AL
+## 4       1   6/8/1951 0:00:00     0900       CST     89    MADISON    AL
+## 5       1 11/15/1951 0:00:00     1500       CST     43    CULLMAN    AL
+## 6       1 11/15/1951 0:00:00     2000       CST     77 LAUDERDALE    AL
+##    EVTYPE BGN_RANGE BGN_AZI BGN_LOCATI END_DATE END_TIME COUNTY_END
+## 1 TORNADO         0                                               0
+## 2 TORNADO         0                                               0
+## 3 TORNADO         0                                               0
+## 4 TORNADO         0                                               0
+## 5 TORNADO         0                                               0
+## 6 TORNADO         0                                               0
+##   COUNTYENDN END_RANGE END_AZI END_LOCATI LENGTH WIDTH F MAG FATALITIES
+## 1         NA         0                      14.0   100 3   0          0
+## 2         NA         0                       2.0   150 2   0          0
+## 3         NA         0                       0.1   123 2   0          0
+## 4         NA         0                       0.0   100 2   0          0
+## 5         NA         0                       0.0   150 2   0          0
+## 6         NA         0                       1.5   177 2   0          0
+##   INJURIES PROPDMG PROPDMGEXP CROPDMG CROPDMGEXP WFO STATEOFFIC ZONENAMES
+## 1       15    25.0          K       0                                    
+## 2        0     2.5          K       0                                    
+## 3        2    25.0          K       0                                    
+## 4        2     2.5          K       0                                    
+## 5        2     2.5          K       0                                    
+## 6        6     2.5          K       0                                    
+##   LATITUDE LONGITUDE LATITUDE_E LONGITUDE_ REMARKS REFNUM
+## 1     3040      8812       3051       8806              1
+## 2     3042      8755          0          0              2
+## 3     3340      8742          0          0              3
+## 4     3458      8626          0          0              4
+## 5     3412      8642          0          0              5
+## 6     3450      8748          0          0              6
+</code></pre>
+
+<pre><code class="r"># check cleanliness of data
+#unique(df$EVTYPE)          # 985 different factors ; COMMENTED OUT FOR REPORT
+                            # EVTYPE data appears clean (no nulls or inappropriate strings)
+class(df$FATALITIES)          # numeric
+</code></pre>
+
+<pre><code>## [1] &quot;numeric&quot;
+</code></pre>
+
+<pre><code class="r">sum(is.na(df$FATALITIES))     # zero NA&#39;s in FATALITIES column
+</code></pre>
+
+<pre><code>## [1] 0
+</code></pre>
+
+<pre><code class="r">class(df$INJURIES)            # numeric
+</code></pre>
+
+<pre><code>## [1] &quot;numeric&quot;
+</code></pre>
+
+<pre><code class="r">sum(is.na(df$INJURIES))       # zero NA&#39;s in INJURIES column
+</code></pre>
+
+<pre><code>## [1] 0
+</code></pre>
+
+<pre><code class="r">class(df$PROPDMG)             # numeric
+</code></pre>
+
+<pre><code>## [1] &quot;numeric&quot;
+</code></pre>
+
+<pre><code class="r">sum(is.na(df$PROPDMG))        # zero NA&#39;s in PROPDMG (property damage) column
+</code></pre>
+
+<pre><code>## [1] 0
+</code></pre>
+
+<pre><code class="r">class(df$CROPDMG)             # numeric
+</code></pre>
+
+<pre><code>## [1] &quot;numeric&quot;
+</code></pre>
+
+<pre><code class="r">sum(is.na(df$CROPDMG))        # zero NA&#39;s in CROPDMG (crop damage) column
+</code></pre>
+
+<pre><code>## [1] 0
+</code></pre>
+
+<h1>Check Data as Read In</h1>
+
+<p>df contains 37 columns and 902297 rows.  </p>
+
+<p>By examining the column names, and following up with examination of the data and reading of supporting documentation, it is evident that only a few of the columns are relevant for  this analysis:  EVTYPE (event type), FATALITIES, INJURIES, PROPDMG (property damage), and CROPDMG (crop damage).  The other 32 columns are not useful or pertinent in this analysis.  Thus we can subset the raw data to only these five columns (and is discussed in Data Processing section).   </p>
+
+<p>Each row corresponds to a weather event.  The columns correspond to information such as state, date of event, start time, end time, and other fields for describing each weather event.  Each row represents one data measurement, and each column represents a unique data type, thus the dataframe df is tidy.  </p>
+
+<h1>Cleanliness of data</h1>
+
+<p>The column EVTYPE contains 985 unique factors (or levels).  Although it is possible to combine these into fewer categories, such combination is beyond the scope of this work.  For example, the &ldquo;unusually cold&rdquo; is distinct from &ldquo;unseasonably low temp&rdquo; (among many other descriptions related to &#39;cool&#39; or &#39;cold&#39;) in the EVTYPE categories, and these two descriptions do not share any common text.  Thus, there is no simple data strategy which can be useful for combining event types.  Such work requires the expertise of weather subject matter experts.  Therefore, the analysis and conclusions of this study maintain the provided 985 different event types, so we will determine which event type produces the greatest population health impact and the greatest economic impact.</p>
+
+<p>The four columns FATALITIES, INJURIES, PROPDMG and CROPDMG are each numeric.  The columns are checked for NA&#39;s:  Zero NA&#39;s are found.</p>
+
+<p>Therefore, the portions of the dataset relevant to this study are complete, clean and tidy.</p>
+
+<h1>Data Processing</h1>
+
+<p>As noted above, there are 5 columns of data relevant to this analysis:  EVTYPE, FATALITIES, INJURIES, PROPDMG and CROPDMG.  Also noted above, these columns contain:  event type information, number of fatalities (numeric, the count corresponding to individual fatalities), injuries (numeric, the count corresponding to individual injuries), property damage (US Dollars, thousands), and crop damage (US Dollars, thousands).</p>
+
+<p>It is worth noting that the columns PROPDMGEXP and CROPDMGEXP do not contain numeric data.  Rather, these contain levels corresponding to codes, thus these columns do not factor in to dollar amount consideration, even though the column names suggest otherwise.</p>
+
+<p>Since one objective in this study is determining which event type has caused the greatest economic impact, it is possible to add the columns PROPDMG and CROPDMG into one column DMG, thereby simplifying further analysis.  Since the total economic impact of an event is the sum of the property damage and the crop damage, we can add the two columns PROPDMG and CROPDMG to produce a new combined column DAMAGE.  While it is possible to add the dollars in PROPDMG and CROPDMG (same units), it is not as apparent how fatalities and injuries could be added.  Presumably, the event counts could be simply added, but it is obvious that a fatality has a greater impact than an injury.  Similarly, it is possible to add fatalities and injuries with a &gt;1 weighting factor for fatalities, but it is not apparent what such a weighting factor should be.  Such a  discussion lies beyond the scope of this analysis study.  </p>
+
+<p>Therefore, it is best to keep these two human health-related quantities separated for analysis, so we have three relevant quantities which will be analyzed:  DMG (PROPDMG+CROPDMG), FATALITIES and INJURIES.</p>
+
+<p>In this analysis, the dataframe size is reduced by subsetting out the three columns described, plus the column for event types.  The dataframe is further reduced by aggregating to produce three compact df&#39;s for each of the three quantities DMG, FATALITIES and INJURIES.  In the three compact df&#39;s, the first column EVTYPE and a second column (DMG, FATALITIES or INJURIES).  The second column consists of the aggregated (summed) values for each event type from the original dataframe (&gt;900,000 rows).  Since the (aggregated) compact dataframes have only one row per event type, these have only 985 rows each.  </p>
+
+<p>The separate dataframes are then sorted so we can focus our attention (plots and tables) on the top of the list out of 985 event types.</p>
+
+<p>Code Chunk #2:  Data processing.<br/>
+Strategy:  Subset, combine, sort, plot.</p>
+
+<pre><code class="r"># Subset:  create dfnew with 4 columns which are relevant for this study
+dfnew &lt;-subset(df,select=c(EVTYPE,INJURIES,FATALITIES,PROPDMG,CROPDMG))
+# Combine 1:  add property damage and crop damage columns into one column
+dfnew$PROPDMG &lt;- dfnew$PROPDMG+dfnew$CROPDMG                     # add property + crop damage
+dfnew &lt;- subset(df,select=c(EVTYPE,INJURIES,FATALITIES,PROPDMG)) # remove redundant 5th column 
+colnames(dfnew)[4] &lt;- &quot;DAMAGE&quot;                                   # rename 4th column
+# Combine 2:  Aggregate, produce 3 separate df&#39;s which have rows= number of event types 
+inj_df &lt;- aggregate(INJURIES~EVTYPE,dfnew,sum)    # CHECKED OK: sums of injuries equals original df sum of injuries
+fat_df &lt;- aggregate(FATALITIES~EVTYPE,dfnew,sum)  # CHECKED OK: sums of fatalities equals original df sum of fatalities
+dmg_df &lt;- aggregate(DAMAGE~EVTYPE,dfnew,sum)      # CHECKED OK: sums equal original df sums (columns PROPDMG+CROPDMG)
+
+
+# prereview aggregated dataframes, see the maximum of each
+inj_df[inj_df$INJURIES==max(inj_df$INJURIES),]        # maximum:  TORNADO  91346
+</code></pre>
+
+<pre><code>##      EVTYPE INJURIES
+## 834 TORNADO    91346
+</code></pre>
+
+<pre><code class="r">fat_df[fat_df$FATALITIES==max(fat_df$FATALITIES),]    # maximum:  TORNADO  5633
+</code></pre>
+
+<pre><code>##      EVTYPE FATALITIES
+## 834 TORNADO       5633
+</code></pre>
+
+<pre><code class="r">dmg_df[dmg_df$DAMAGE==max(dmg_df$DAMAGE),]            # maximum:  TORNADO  3312277
+</code></pre>
+
+<pre><code>##      EVTYPE  DAMAGE
+## 834 TORNADO 3212258
+</code></pre>
+
+<p>Code Chunk 2 performs data processing.  The original dataframe is huge and slow, so we can make subsequent calculations faster by eliminating the unused columns.  dfnew is a subset of the original df including only columns EVTYPE (event type), FATALITIES, INJURIES, PROPDMG and CROPDMG.  Columns PROPDMG and CROPDMG are combined into DAMAGE since we are only interested in the cumulative economic effects of events.  </p>
+
+<p>Finally, the numbers for fatalities, injuries and damage are aggregated over event types, so we end up with three small dataframes which are 985 lines long, corresponding to the number of event types.  Sums are checked:  the sum of fatalities in the aggregated dataframe equals that of the original dataframe (read from the file).  Similarly, the sum for aggregated injuries matches that of the original df, and the sum of damage equals the sums of CROPDMG +PROPDMG in the original dataframe.  Therefore, the correctness of the subsetted and aggregated data is validated.  By printing out the maximum value of each small dataframe, we not only preview the data, but we can also check the correctness of subsequent processing (sorting) and plotting.</p>
+
+<h1>Results</h1>
+
+<p>In Code Chunk 2 we can preview plotted results by observing the maximum values.  The event type which produces the largest injury value is TORNADO, which has produced 91346 injuries.  Similarly, the event type producing the most fatalities is TORNADO corresponding to 5633 deaths.  Finally, TORNADO also produces the most damage of 3312277 (US$x1000). </p>
+
+<p>Code Chunk 3:  Results
+Sort the dataframes for each of the three data types.  Print three tables for the top 10 of each.</p>
+
+<pre><code class="r">inj_df &lt;- inj_df[order(-inj_df$INJURIES),]     #descending order
+fat_df &lt;- fat_df[order(-fat_df$FATALITIES),]   #descending order
+dmg_df &lt;- dmg_df[order(-dmg_df$DAMAGE),]       #descending order
+
+# print tables
+print(&quot;TABLE 1:  TOP 10 INJURY EVENT TYPES&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;TABLE 1:  TOP 10 INJURY EVENT TYPES&quot;
+</code></pre>
+
+<pre><code class="r">inj_df[1:10,]
+</code></pre>
+
+<pre><code>##                EVTYPE INJURIES
+## 834           TORNADO    91346
+## 856         TSTM WIND     6957
+## 170             FLOOD     6789
+## 130    EXCESSIVE HEAT     6525
+## 464         LIGHTNING     5230
+## 275              HEAT     2100
+## 427         ICE STORM     1975
+## 153       FLASH FLOOD     1777
+## 760 THUNDERSTORM WIND     1488
+## 244              HAIL     1361
+</code></pre>
+
+<pre><code class="r">print(&quot;The top 10 injury event types represent this fraction of the total event injuries:&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;The top 10 injury event types represent this fraction of the total event injuries:&quot;
+</code></pre>
+
+<pre><code class="r">sum(inj_df$INJURIES[1:10])/sum(inj_df$INJURIES)      # about 89%
+</code></pre>
+
+<pre><code>## [1] 0.893402
+</code></pre>
+
+<pre><code class="r">print(&quot;TABLE 2:  TOP 10 FATALITY EVENT TYPES&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;TABLE 2:  TOP 10 FATALITY EVENT TYPES&quot;
+</code></pre>
+
+<pre><code class="r">fat_df[1:10,]
+</code></pre>
+
+<pre><code>##             EVTYPE FATALITIES
+## 834        TORNADO       5633
+## 130 EXCESSIVE HEAT       1903
+## 153    FLASH FLOOD        978
+## 275           HEAT        937
+## 464      LIGHTNING        816
+## 856      TSTM WIND        504
+## 170          FLOOD        470
+## 585    RIP CURRENT        368
+## 359      HIGH WIND        248
+## 19       AVALANCHE        224
+</code></pre>
+
+<pre><code class="r">print(&quot;The top 10 fatality event types represent this fraction of the total event fatalities:&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;The top 10 fatality event types represent this fraction of the total event fatalities:&quot;
+</code></pre>
+
+<pre><code class="r">sum(fat_df$FATALITIES[1:10])/sum(fat_df$FATALITIES)  # about 80%
+</code></pre>
+
+<pre><code>## [1] 0.797689
+</code></pre>
+
+<pre><code class="r">print(&quot;TABLE 3:  TOP 10 DAMAGE EVENT TYPES&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;TABLE 3:  TOP 10 DAMAGE EVENT TYPES&quot;
+</code></pre>
+
+<pre><code class="r">dmg_df[1:10,]
+</code></pre>
+
+<pre><code>##                 EVTYPE    DAMAGE
+## 834            TORNADO 3212258.2
+## 153        FLASH FLOOD 1420124.6
+## 856          TSTM WIND 1335965.6
+## 170              FLOOD  899938.5
+## 760  THUNDERSTORM WIND  876844.2
+## 244               HAIL  688693.4
+## 464          LIGHTNING  603351.8
+## 786 THUNDERSTORM WINDS  446293.2
+## 359          HIGH WIND  324731.6
+## 972       WINTER STORM  132720.6
+</code></pre>
+
+<pre><code class="r">print(&quot;The top 10 damage event types represent this fraction of the total event damage:&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;The top 10 damage event types represent this fraction of the total event damage:&quot;
+</code></pre>
+
+<pre><code class="r">sum(dmg_df$DAMAGE[1:10])/sum(dmg_df$DAMAGE)          # about 91%
+</code></pre>
+
+<pre><code>## [1] 0.9133099
+</code></pre>
+
+<p>We can already see from tables that tornadoes are the number one event type in all three categories (injuries, fatalties, and damage in dollars). For injuries and fatalities, the top 10 lists represent about 90% of the total.  For fatalities, the top 10 list represents about 80% of the total.  Thus, the remaining 10-20% is spread out over a long tail along the remaining 975 event types.  By studying the &ldquo;top 10&rdquo;, an emergency planner on the national level can focus on the top 80-90% of likely events.</p>
+
+<p>Code Chunk #4: Results 
+Plot the data to show the top 10 event types for injuries, fatalities and damage.</p>
+
+<pre><code class="r"># plot injury data
+par(las=2,mar=c(12,6,4,2)) # make label text perpendicular to axis
+barplot(names.arg=inj_df$EVTYPE[1:10],
+        inj_df$INJURIES[1:10],
+        ylab=&quot;Total Injuries \n \n&quot;,
+        main=&quot;Injuries by Event Type, \n US 1950-2011&quot;)
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk plot data"/> </p>
+
+<pre><code class="r"># plot fatality data
+par(las=2,mar=c(12,6,4,2)) # make label text perpendicular to axis
+barplot(names.arg=fat_df$EVTYPE[1:10],
+        fat_df$FATALITIES[1:10],
+        ylab=&quot;Total Fatalities \n \n&quot;,
+        main=&quot;Fatalities by Event Type, \n US 1950-2011&quot;)
+</code></pre>
+
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAH4CAMAAACR9g9NAAAAgVBMVEX9/v0AAAAAACoAAFQAKn8AVakqAAAqACoqAFQqKioqKlQqKn8qf9NUAABUACpUAFRUKgBUKn9UVSpUqf1/KgB/Kip/KlR/f1R/qX9/1NN/1P2pVQCpqVSp/qmp/tOp/v2+vr7TfyrT/qnT/tPT/v39qVT91H/91NP9/qn9/tP9/v25rx/CAAAAK3RSTlP///////////////////////////////////////////////////////8AI8mn0AAAAAlwSFlzAAALEgAACxIB0t1+/AAAEYFJREFUeJztnQF7q7YZhS+5Sdqt9u0253ZdvDbjLniO//8PHJIA24mDjowsJM55n7ZJXJCwXySkD/H5y0FQ8mXuAxDzIPGkSDwpEk+KxJMi8aRIPCkST4rEkyLxpEg8KRJPisSTIvGkSDwp5Yt/e6osm+NL2+Pv+/XXF/OvfdH9crGMj/9jv7bF3j2P1t5V1R/EwzXvYBaWKH5bnYv/8OKFMq4U35cq8ek5SmusJ+vgofujb/F/2hfdWVB3Z8nusaq6Xdsy/l1V96+2rKZamdf26/tX+z+3Vqf9b7er2/zrS1eVY/d43L/f4HCsLTcWJN410fv/do7tH68fxW9t01z1m7+6Mir3R91K2rpGPohvzEb7dftqv2u3+cMH8Ydu/6G8YZfsWIL4k062U7sZ/hiu8eZF84v1Y04W+8uxjJV1u3t86E+krqs3zbh1buwPu9rNG+d1aM32/3b7d+VVm2GXtJ8JwKLEG1eDePfHB/FN1V26rdhjV/9iL9hvT/c/1v051LfaurVodh92taeC7RHei+/2d+W1+w27zPHJjLIE8Z09c80exPd/fC7ebeKUDOIP9d3vj65jHrp689uPtb14D+Lbvy6K7/aX+AQM4k3D3D12jvs/Lnf1A524oas3Z0Nn6Si+vWr/01ymh11HxLv9z7v6LFmQeNe63PDtof/jRPzZ4M5csauhrz8OxtrfOlVdV2/M9mdDv+up+PPBXbf/+8GdG2TO8el8yoLEmw95Vbtu/v61+2MQb1784SI53WDemO9adz+dO/STt8OZ+OHFbX929OJtVW77rnHbTc/Kq9ysQOLzpp446667if57zbtf8urzJf6cqVMvt//HUvbfMhvfSfwZ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" alt="plot of chunk plot data"/> </p>
+
+<pre><code class="r"># plot damage data
+par(las=2,mar=c(12,6,4,2)) # make label text perpendicular to axis
+barplot(names.arg=dmg_df$EVTYPE[1:10],
+        dmg_df$DAMAGE[1:10],
+        ylab=&quot;Total Damage, US$ x1000 \n \n&quot;,
+        main=&quot;Damage by Event Type, \n US Property plus Crop Damage&quot;)
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk plot data"/> </p>
+
+<p>The bar plots confirm and show that &ldquo;tornado&rdquo;&ldquo; is the number one event type for all three categories:  injuries, fatalities and damage.  The answer to the questions of which event types are most harmful to human population health, and which event types have the greatest economic consequences, are apparent in both the above tables and the plots, which show the top 10 event type lists.</p>
+
+<p>It is worth noting that some event type labels appear redundant.  For example, there are three similar &quot;thunderstorm wind&rdquo; event types in the Damage top 10 plot:  &ldquo;TSTM WIND&rdquo;, &ldquo;THUNDERSTORM WIND&rdquo;, and &ldquo;THUNDERSTORM WINDS&rdquo;.  The addition of these three event types into one event would produce a close second most-damaging event type.  Also, combining these events would produce a steeper drops toward lower tails within the top 10 bar plot.  Similar event type redundancies can be observed in the Injuries plot (&ldquo;TSTM WIND&rdquo; - &ldquo;THUNDERSTORM WIND&rdquo;&ldquo;, &quot;HEAT&rdquo; - &ldquo;EXCESSIVE HEAT&rdquo;&ldquo;) and the Fatalities plot (HEAT-EXCESSIVE HEAT).  Nevertheless, the plots are characterized by rapid decrease from a number one event type into long tails.</p>
+
+<p>The combining of event types within the NOAA data is a separate body of work which lies beyond the scope of this study, and which may require the expertise of a meteorologist who understands the detailed circumstances of (event type) data entries in order to create an effective event-type reduction strategy.  There may also be a tradeoff between a reduced set of event types and the detailed ability to describe events.  For example, further along the tail are events such as TSTM (G45) which denotes thunderstorm winds with gusts exceeding 45 knots, and other TSTM G-values.  If these are combined, some information regarding the events may be lost.</p>
+
+<p>In summary, the top event types which are most harmful to human population health in the US are:  tornado, heat/excessive heat, flood/flash flood, thunderstorm wind, and and lightning.  The top economic impacting event types are:  tornado, thunderstorm wind, flash flood/flood, hail and lightning.  The objectives of this study of the NOAA dataset have been achieved.</p>
+
+<h1>Conclusions</h1>
+
+<p>In this study, a Storm Data dataset was downloaded and read in to a dataframe.  This documented dataset relates to weather events in the United States from 1950 to 2011.  The original dataframe size was reduced by subsetting relevant columns and combining two columns related to (property and crop) damage into one column.  The data was further reduced from &gt;9E5 rows to 985 rows by aggregating by event type.  Finally, the data was sorted in decreasing order.  </p>
+
+<p>By summing the top 10 of each category &ndash; injuries, fatalities, and damage, it was possible to determine that each of the top 10 lists contain about 80-90% of all events.  The correctness of data can be checked by summing the relevant columns through transformations (subsetting, aggregating, sorting) and comparing to the sums of the original dataframe columns.  Data is presented in both table form and in bar plots.  By plotting the results, we can see in all three cases how the impact of event types rapidly decreases from a large number one impact toward a small tail.  </p>
+
+<p>The top event types which are most harmful to human population health in the US are:  tornado, heat/excessive heat, flood/flash flood, thunderstorm wind, and and lightning.  The top economic impacting event types are:  tornado, thunderstorm wind, flash flood/flood, hail and lightning.</p>
+
+</body>
+
+</html>
+

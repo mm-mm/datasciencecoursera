@@ -1,0 +1,210 @@
+
+NOAA Storm Dataset Analysis 
+===========================
+Coursera/Data Science
+Reproducible Research, Peer Assessment #2
+M.M.  October 21, 2014
+
+
+SYNOPSIS
+========
+
+In this study, NOAA Storm Data was downloaded and analyzed, with the objective of determining which event types have the greates health and economic impacts.  This documented dataset describes severe weather events in the United States from 1950 to 2011.  The strategy for analysis was to determine the relevant data, subset out the relevant columns, combine two columns (where values could be added), then aggregate by weather event types into compact dataframes, then sort and present the data in tabular and plotted formats.  By summing the top 10 of each category -- injuries, fatalities, and damage, it was possible to determine that each of the top 10 lists describes about 80-90% of the impact of all events.  The correctness of data was validated by summing the relevant columns through transformations (subsetting, aggregating, sorting) and comparing to the sums of the original dataframe columns.  Data is presented in both table form and in bar plots.  By plotting the results, we can see in all three cases how the impact of event types rapidly decreases from a large number one impact toward a small tail.  The top event type with the largest impact to both human health and economic activity is clearly tornadoes, followed by a list which includes thunderstorm wind, floods/flash floods, heat/excessive heat, lightning and hail.  
+
+<!-- rmarkdown v1 -->
+(note:  parts of the Introduction and Data sections are largely copied from the Coursera assignment web page, with minor appropriate changes to both sections.)
+
+
+Introduction
+============
+
+Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern.
+
+This project involves exploring the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database. This database tracks characteristics of major storms and weather events in the United States, including when and where they occur, as well as estimates of any fatalities, injuries, and property damage.  The dataset provided by the NOAA contains about 60 years of collected information spanning from 1950 to 2011.  The later years contain more complete entries, and the methods of information collection are described in detail in the two reference documents noted below (FAQ and NOAA data description).
+
+In particular, this analysis work answers two questions:  (1) Across the United States, which types of events are most harmful with respect to population health?  (2) Across the United States, which types of events have the greatest economic consequences?  The analyses provided in this document will focus on answering the two questions using the data from the database described above.  For brevity, visualization of data is accomplished using three plots.
+
+
+Source Data Description
+=======================
+
+The data for this work comes in the form of a comma-separated-value file compressed via the bzip2 algorithm to reduce its size. This data file has a size of 47Mb.  Data was downloaded on 10/20/2014 from the web site:  
+            https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2.  
+
+Documentation available:
+        National Weather Service Storm Data Documentation:
+            https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
+        National Climatic Data Center Storm Events FAQ:  
+            https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf
+
+The events in the database start in the year 1950 and end in November 2011. In the earlier years of the database there are generally fewer events recorded, most likely due to a lack of good records. More recent years should be considered more complete.
+
+Code Chunk #1:
+Read the file into a dataframe df, initial investigation of df:
+```{r read data into df and check df, echo=TRUE}
+setwd("C:/Users/Mark/Desktop")          #NOTE TO USERS:  CHANGE THIS TO YOUR DESIRED HOME DIRECTORY (or delete line)
+# read data into compressed bz2 file in home directory
+#download.file("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2","StormData.csv.bz2")
+# note: above line commented out for faster debugging/processing (file manually downloaded separately into home directory)
+# unpack from .bz2 format and read datafile into dataframe df (raw data)
+df <- read.csv(bzfile("StormData.csv.bz2"))
+
+# explore dataframe
+#summary(df)  # COMMENTED OUT FOR REPORT
+dim(df)
+colnames(df)
+head(df)
+# check cleanliness of data
+#unique(df$EVTYPE)          # 985 different factors ; COMMENTED OUT FOR REPORT
+                            # EVTYPE data appears clean (no nulls or inappropriate strings)
+class(df$FATALITIES)          # numeric
+sum(is.na(df$FATALITIES))     # zero NA's in FATALITIES column
+class(df$INJURIES)            # numeric
+sum(is.na(df$INJURIES))       # zero NA's in INJURIES column
+class(df$PROPDMG)             # numeric
+sum(is.na(df$PROPDMG))        # zero NA's in PROPDMG (property damage) column
+class(df$CROPDMG)             # numeric
+sum(is.na(df$CROPDMG))        # zero NA's in CROPDMG (crop damage) column
+
+```
+
+
+Check Data as Read In
+=====================
+
+df contains 37 columns and 902297 rows.  
+
+By examining the column names, and following up with examination of the data and reading of supporting documentation, it is evident that only a few of the columns are relevant for  this analysis:  EVTYPE (event type), FATALITIES, INJURIES, PROPDMG (property damage), and CROPDMG (crop damage).  The other 32 columns are not useful or pertinent in this analysis.  Thus we can subset the raw data to only these five columns (and is discussed in Data Processing section).   
+
+Each row corresponds to a weather event.  The columns correspond to information such as state, date of event, start time, end time, and other fields for describing each weather event.  Each row represents one data measurement, and each column represents a unique data type, thus the dataframe df is tidy.  
+
+
+Cleanliness of data
+===================
+
+The column EVTYPE contains 985 unique factors (or levels).  Although it is possible to combine these into fewer categories, such combination is beyond the scope of this work.  For example, the "unusually cold" is distinct from "unseasonably low temp" (among many other descriptions related to 'cool' or 'cold') in the EVTYPE categories, and these two descriptions do not share any common text.  Thus, there is no simple data strategy which can be useful for combining event types.  Such work requires the expertise of weather subject matter experts.  Therefore, the analysis and conclusions of this study maintain the provided 985 different event types, so we will determine which event type produces the greatest population health impact and the greatest economic impact.
+
+The four columns FATALITIES, INJURIES, PROPDMG and CROPDMG are each numeric.  The columns are checked for NA's:  Zero NA's are found.
+
+Therefore, the portions of the dataset relevant to this study are complete, clean and tidy.
+
+
+ 
+Data Processing
+===============
+
+As noted above, there are 5 columns of data relevant to this analysis:  EVTYPE, FATALITIES, INJURIES, PROPDMG and CROPDMG.  Also noted above, these columns contain:  event type information, number of fatalities (numeric, the count corresponding to individual fatalities), injuries (numeric, the count corresponding to individual injuries), property damage (US Dollars, thousands), and crop damage (US Dollars, thousands).
+
+
+It is worth noting that the columns PROPDMGEXP and CROPDMGEXP do not contain numeric data.  Rather, these contain levels corresponding to codes, thus these columns do not factor in to dollar amount consideration, even though the column names suggest otherwise.
+
+Since one objective in this study is determining which event type has caused the greatest economic impact, it is possible to add the columns PROPDMG and CROPDMG into one column DMG, thereby simplifying further analysis.  Since the total economic impact of an event is the sum of the property damage and the crop damage, we can add the two columns PROPDMG and CROPDMG to produce a new combined column DAMAGE.  While it is possible to add the dollars in PROPDMG and CROPDMG (same units), it is not as apparent how fatalities and injuries could be added.  Presumably, the event counts could be simply added, but it is obvious that a fatality has a greater impact than an injury.  Similarly, it is possible to add fatalities and injuries with a >1 weighting factor for fatalities, but it is not apparent what such a weighting factor should be.  Such a  discussion lies beyond the scope of this analysis study.  
+
+Therefore, it is best to keep these two human health-related quantities separated for analysis, so we have three relevant quantities which will be analyzed:  DMG (PROPDMG+CROPDMG), FATALITIES and INJURIES.
+
+In this analysis, the dataframe size is reduced by subsetting out the three columns described, plus the column for event types.  The dataframe is further reduced by aggregating to produce three compact df's for each of the three quantities DMG, FATALITIES and INJURIES.  In the three compact df's, the first column EVTYPE and a second column (DMG, FATALITIES or INJURIES).  The second column consists of the aggregated (summed) values for each event type from the original dataframe (>900,000 rows).  Since the (aggregated) compact dataframes have only one row per event type, these have only 985 rows each.  
+
+The separate dataframes are then sorted so we can focus our attention (plots and tables) on the top of the list out of 985 event types.
+
+Code Chunk #2:  Data processing.  
+Strategy:  Subset, combine, sort, plot.
+```{r data processing, echo=TRUE}
+# Subset:  create dfnew with 4 columns which are relevant for this study
+dfnew <-subset(df,select=c(EVTYPE,INJURIES,FATALITIES,PROPDMG,CROPDMG))
+# Combine 1:  add property damage and crop damage columns into one column
+dfnew$PROPDMG <- dfnew$PROPDMG+dfnew$CROPDMG                     # add property + crop damage
+dfnew <- subset(df,select=c(EVTYPE,INJURIES,FATALITIES,PROPDMG)) # remove redundant 5th column 
+colnames(dfnew)[4] <- "DAMAGE"                                   # rename 4th column
+# Combine 2:  Aggregate, produce 3 separate df's which have rows= number of event types 
+inj_df <- aggregate(INJURIES~EVTYPE,dfnew,sum)    # CHECKED OK: sums of injuries equals original df sum of injuries
+fat_df <- aggregate(FATALITIES~EVTYPE,dfnew,sum)  # CHECKED OK: sums of fatalities equals original df sum of fatalities
+dmg_df <- aggregate(DAMAGE~EVTYPE,dfnew,sum)      # CHECKED OK: sums equal original df sums (columns PROPDMG+CROPDMG)
+
+
+# prereview aggregated dataframes, see the maximum of each
+inj_df[inj_df$INJURIES==max(inj_df$INJURIES),]        # maximum:  TORNADO  91346
+fat_df[fat_df$FATALITIES==max(fat_df$FATALITIES),]    # maximum:  TORNADO  5633
+dmg_df[dmg_df$DAMAGE==max(dmg_df$DAMAGE),]            # maximum:  TORNADO  3312277
+```
+
+Code Chunk 2 performs data processing.  The original dataframe is huge and slow, so we can make subsequent calculations faster by eliminating the unused columns.  dfnew is a subset of the original df including only columns EVTYPE (event type), FATALITIES, INJURIES, PROPDMG and CROPDMG.  Columns PROPDMG and CROPDMG are combined into DAMAGE since we are only interested in the cumulative economic effects of events.  
+
+Finally, the numbers for fatalities, injuries and damage are aggregated over event types, so we end up with three small dataframes which are 985 lines long, corresponding to the number of event types.  Sums are checked:  the sum of fatalities in the aggregated dataframe equals that of the original dataframe (read from the file).  Similarly, the sum for aggregated injuries matches that of the original df, and the sum of damage equals the sums of CROPDMG +PROPDMG in the original dataframe.  Therefore, the correctness of the subsetted and aggregated data is validated.  By printing out the maximum value of each small dataframe, we not only preview the data, but we can also check the correctness of subsequent processing (sorting) and plotting.
+
+
+Results
+=======
+
+In Code Chunk 2 we can preview plotted results by observing the maximum values.  The event type which produces the largest injury value is TORNADO, which has produced 91346 injuries.  Similarly, the event type producing the most fatalities is TORNADO corresponding to 5633 deaths.  Finally, TORNADO also produces the most damage of 3312277 (US$x1000). 
+
+Code Chunk 3:  Results
+Sort the dataframes for each of the three data types.  Print three tables for the top 10 of each.
+```{r plot daily pattern of steps, echo=TRUE}
+inj_df <- inj_df[order(-inj_df$INJURIES),]     #descending order
+fat_df <- fat_df[order(-fat_df$FATALITIES),]   #descending order
+dmg_df <- dmg_df[order(-dmg_df$DAMAGE),]       #descending order
+
+# print tables
+print("TABLE 1:  TOP 10 INJURY EVENT TYPES")
+inj_df[1:10,]
+print("The top 10 injury event types represent this fraction of the total event injuries:")
+sum(inj_df$INJURIES[1:10])/sum(inj_df$INJURIES)      # about 89%
+
+print("TABLE 2:  TOP 10 FATALITY EVENT TYPES")
+fat_df[1:10,]
+print("The top 10 fatality event types represent this fraction of the total event fatalities:")
+sum(fat_df$FATALITIES[1:10])/sum(fat_df$FATALITIES)  # about 80%
+
+print("TABLE 3:  TOP 10 DAMAGE EVENT TYPES")
+dmg_df[1:10,]
+print("The top 10 damage event types represent this fraction of the total event damage:")
+sum(dmg_df$DAMAGE[1:10])/sum(dmg_df$DAMAGE)          # about 91%
+```
+
+We can already see from tables that tornadoes are the number one event type in all three categories (injuries, fatalties, and damage in dollars). For injuries and fatalities, the top 10 lists represent about 90% of the total.  For fatalities, the top 10 list represents about 80% of the total.  Thus, the remaining 10-20% is spread out over a long tail along the remaining 975 event types.  By studying the "top 10", an emergency planner on the national level can focus on the top 80-90% of likely events.
+
+
+Code Chunk #4: Results 
+Plot the data to show the top 10 event types for injuries, fatalities and damage.
+```{r plot data, echo=TRUE}
+# plot injury data
+par(las=2,mar=c(12,6,4,2)) # make label text perpendicular to axis
+barplot(names.arg=inj_df$EVTYPE[1:10],
+        inj_df$INJURIES[1:10],
+        ylab="Total Injuries \n \n",
+        main="Injuries by Event Type, \n US 1950-2011")
+
+# plot fatality data
+par(las=2,mar=c(12,6,4,2)) # make label text perpendicular to axis
+barplot(names.arg=fat_df$EVTYPE[1:10],
+        fat_df$FATALITIES[1:10],
+        ylab="Total Fatalities \n \n",
+        main="Fatalities by Event Type, \n US 1950-2011")
+
+# plot damage data
+par(las=2,mar=c(12,6,4,2)) # make label text perpendicular to axis
+barplot(names.arg=dmg_df$EVTYPE[1:10],
+        dmg_df$DAMAGE[1:10],
+        ylab="Total Damage, US$ x1000 \n \n",
+        main="Damage by Event Type, \n US Property plus Crop Damage")
+```
+
+The bar plots confirm and show that "tornado"" is the number one event type for all three categories:  injuries, fatalities and damage.  The answer to the questions of which event types are most harmful to human population health, and which event types have the greatest economic consequences, are apparent in both the above tables and the plots, which show the top 10 event type lists.
+
+It is worth noting that some event type labels appear redundant.  For example, there are three similar "thunderstorm wind" event types in the Damage top 10 plot:  "TSTM WIND", "THUNDERSTORM WIND", and "THUNDERSTORM WINDS".  The addition of these three event types into one event would produce a close second most-damaging event type.  Also, combining these events would produce a steeper drops toward lower tails within the top 10 bar plot.  Similar event type redundancies can be observed in the Injuries plot ("TSTM WIND" - "THUNDERSTORM WIND"", "HEAT" - "EXCESSIVE HEAT"") and the Fatalities plot (HEAT-EXCESSIVE HEAT).  Nevertheless, the plots are characterized by rapid decrease from a number one event type into long tails.
+
+The combining of event types within the NOAA data is a separate body of work which lies beyond the scope of this study, and which may require the expertise of a meteorologist who understands the detailed circumstances of (event type) data entries in order to create an effective event-type reduction strategy.  There may also be a tradeoff between a reduced set of event types and the detailed ability to describe events.  For example, further along the tail are events such as TSTM (G45) which denotes thunderstorm winds with gusts exceeding 45 knots, and other TSTM G-values.  If these are combined, some information regarding the events may be lost.
+
+In summary, the top event types which are most harmful to human population health in the US are:  tornado, heat/excessive heat, flood/flash flood, thunderstorm wind, and and lightning.  The top economic impacting event types are:  tornado, thunderstorm wind, flash flood/flood, hail and lightning.  The objectives of this study of the NOAA dataset have been achieved.
+
+
+Conclusions
+===========
+
+In this study, a Storm Data dataset was downloaded and read in to a dataframe.  This documented dataset relates to weather events in the United States from 1950 to 2011.  The original dataframe size was reduced by subsetting relevant columns and combining two columns related to (property and crop) damage into one column.  The data was further reduced from >9E5 rows to 985 rows by aggregating by event type.  Finally, the data was sorted in decreasing order.  
+
+By summing the top 10 of each category -- injuries, fatalities, and damage, it was possible to determine that each of the top 10 lists contain about 80-90% of all events.  The correctness of data can be checked by summing the relevant columns through transformations (subsetting, aggregating, sorting) and comparing to the sums of the original dataframe columns.  Data is presented in both table form and in bar plots.  By plotting the results, we can see in all three cases how the impact of event types rapidly decreases from a large number one impact toward a small tail.  
+
+The top event types which are most harmful to human population health in the US are:  tornado, heat/excessive heat, flood/flash flood, thunderstorm wind, and and lightning.  The top economic impacting event types are:  tornado, thunderstorm wind, flash flood/flood, hail and lightning.
+
+
