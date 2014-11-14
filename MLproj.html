@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Practical Machine Learning:  Predictor Project</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Practical Machine Learning:  Predictor Project</h1>
+
+<p>M.Mueller,  November 2014
+Johns Hopkins/Coursera Data Science Course:  Practical Machine Learning</p>
+
+<h1>Synopsis:</h1>
+
+<p>A random forest predictive model is capable of predicting exercise type (A-E) with a 99.26% accuracy on a validation (out of sample) data set.  The random forest accuracy is the higher than those of other types of models, including rpart, lda, and gbm which provides the second highest accuracy.  The random forest model is applied to classifying 20 out of 20 exercise types correctly.</p>
+
+<h1>Introduction</h1>
+
+<p>This project is an exercise for Practical Machine Learning which pertains to analysis of data related to physical exercise prediction.  Please reference for more info:  <a href="http://groupware.les.inf.puc-rio.br/har">http://groupware.les.inf.puc-rio.br/har</a>    <a href="https://class.coursera.org/predmachlearn-007/human_grading/view/courses/972608/assessments/4/submissions">https://class.coursera.org/predmachlearn-007/human_grading/view/courses/972608/assessments/4/submissions</a>   </p>
+
+<p>Data is collected from accelerometers attached to exercising individuals, and five different motions are performed.  In this study, a predictor is formed which can distinguish between the five different motions with a high degree of accuracy.</p>
+
+<h2>Read Data; Preliminary Data Exploration:</h2>
+
+<p>Training and testing data are downloaded from two separate files, into the working directory, then read into dataframes. </p>
+
+<p>The training dataset is comprised of 19622 rows by 160 columns.  Since it is the objective to predict &ldquo;classe&rdquo; as a function of the other variables, one can plot each of the variables versus classe.  Classe is a factor of the levels A, B, C, D and E which each represents a specific exercise.  The data is derived from accelermeters.  </p>
+
+<p>Code Chunk 1
+Read In Data</p>
+
+<pre><code class="r">library(kernel); library(caret); library(rpart); library(randomForest)
+</code></pre>
+
+<pre><code>## Error in library(kernel): there is no package called &#39;kernel&#39;
+</code></pre>
+
+<pre><code>## Loading required package: lattice
+## Loading required package: ggplot2
+</code></pre>
+
+<pre><code>## Warning: package &#39;randomForest&#39; was built under R version 3.1.2
+</code></pre>
+
+<pre><code>## randomForest 4.6-10
+## Type rfNews() to see new features/changes/bug fixes.
+</code></pre>
+
+<pre><code class="r">library(e1071); library(MASS); library(&quot;parallel&quot;)
+</code></pre>
+
+<pre><code>## Warning: package &#39;e1071&#39; was built under R version 3.1.2
+</code></pre>
+
+<pre><code class="r">#read data
+pml_trn &lt;- read.csv(&quot;pml-training.csv&quot;)
+pml_tst &lt;- read.csv(&quot;pml-testing.csv&quot;)
+</code></pre>
+
+<p>By examining the raw data (through summary, class, and head/tail) we can see that many of the columns are comprised of mostly NA&#39;s.  Other columns are non-numeric:  these contain blanks, DIV/0 and other entries which are not useful for developing a predictive model.  </p>
+
+<p>The classe variable can be plotted (y axis) versus the other 159 variables (x axis) to visualize the separation of boxplots for each of the A, B, C, D and E exercise motion types.  We can see that the ranges of distributions vary for each of A-E.  One such example is shown below.  Thus, we can expect that a machine learning model should be able to classify the classe factors A-E based on the information provided in the other variables.</p>
+
+<p>Code Chunk 2
+Explore Data</p>
+
+<pre><code class="r">#explore raw data
+print(&quot;explore raw training data as read from files:&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;explore raw training data as read from files:&quot;
+</code></pre>
+
+<pre><code class="r">dim(pml_trn)
+</code></pre>
+
+<pre><code>## [1] 19622   160
+</code></pre>
+
+<pre><code class="r">dim(pml_tst)  #test set is very small; training large 
+</code></pre>
+
+<pre><code>## [1]  20 160
+</code></pre>
+
+<pre><code class="r"># colnames(pml_trn); colnames(pml_tst) #same col names in training and test
+print(&quot;note:  column names are identical in the two dataframes, except for last column&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;note:  column names are identical in the two dataframes, except for last column&quot;
+</code></pre>
+
+<pre><code class="r"># plot x=classe, y= everything else (one example shown below), observe column classes, examine raw data 
+plot(pml_trn$classe,pml_trn[,32],main=&quot;Plot of Raw Training Data, showing separation of ranges: \n stddev_pitch_belt boxplots versus classe exercise type A-E&quot;,ylab=&quot;stddev_pitch_belt&quot;,xlab=&quot;classe&quot;)
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-2"/> </p>
+
+<h2>Processing of Data:</h2>
+
+<p>The training dataset is divided into training dataframe trn (80%) and a test dataframe tst (20%). </p>
+
+<p>Dataframe trn is subsetted to eliminate some of the original columns in several different ways.</p>
+
+<p>First of all, some of the columns are substantially NA:  these columns can be eliminated from a training dataset since these will not be useful in developing a predictive model.  </p>
+
+<p>Secondly, the first seven columns are also eliminated.  The first column is an index number, while the others are timestamp and user name.  These are not expected to be useful for predicting the &ldquo;classe&rdquo; exercise type (A-E), especially those derived from different users and different times.  Although one can see in the &ldquo;test&rdquo; datafile that the user names correspond to those in the training datafile, it is a conscious choice to remove this variable as if one had not first examined the test datafile.</p>
+
+<p>Third, some of the columns contain factor type data.  Many of the factor columns contain blanks, DIV/0 and other non-numeric data which are not expected to add predictive value to a predictive model.  THese can be eliminated.  </p>
+
+<p>In summary, the processed dataframe trn contains 53 columns (including classe).  This processed training dataframe contains zero NA&#39;s.  The dataframe is clean and tidy.  </p>
+
+<p>It is worth noting that the test dataframe tst is not processed:  columns are not removed.  Leaving all columns in a test set does not affect the prediction from the training set (at least in this case).  The data from the 20-line pml-test.csv is also left in the raw format.</p>
+
+<p>Code Chunk 3
+Data Processing</p>
+
+<pre><code class="r"># Divide the (large) training set into training data (80%)and testing data (20%).
+set.seed(3456)
+inTrain &lt;- createDataPartition(y=pml_trn$classe,p=0.8,list=FALSE)
+trn &lt;- pml_trn[inTrain,]
+tst &lt;- pml_trn[-inTrain,]
+dim(trn); dim(tst)  #check dimensions
+</code></pre>
+
+<pre><code>## [1] 15699   160
+</code></pre>
+
+<pre><code>## [1] 3923  160
+</code></pre>
+
+<pre><code class="r"># Note:  Numeric data is in columns which are either zero NA&#39;s, or almost all NA&#39;s.
+
+# Data Processing:
+# Remove columns which are substantially (&gt;60%) NA
+na_cols &lt;- sapply(colnames(trn), 
+    function(x) if(sum(is.na(trn[,x])) &gt; 0.60*nrow(trn)){return(TRUE)}else{return(FALSE)})
+trn &lt;- trn[,!na_cols]
+sum(is.na(trn))  #zero NA&#39;s in remaining trn training dataframe, confirmed.
+</code></pre>
+
+<pre><code>## [1] 0
+</code></pre>
+
+<pre><code class="r"># Remove first seven columns (not needed for predictive model)
+trn &lt;- trn[,8:93]
+
+# Remove columns containing factors consisting of mainly blanks, DIV/0 or other irrelevant data
+trn_zerovar &lt;- nearZeroVar(trn, saveMetrics = TRUE)
+trn &lt;- trn[,!trn_zerovar$nzv]
+# remaining data is either &quot;numeric&quot;, &quot;integer&quot;; the last column &quot;classe&quot; is still &quot;factor&quot;
+</code></pre>
+
+<h2>Random Forest Model</h2>
+
+<p>A random forest model rf_model is generated using the trn (training) dataframe.  </p>
+
+<p>The in-sample accuracy of this model is 0.994, with an accuracy standard deviation of 0.00169.  The random forest package performs cross-validation within the algorithm.  The best accuracy is obtained for mtry=2, or the number of variables tried at each split = 2.  </p>
+
+<p>The out-of-sample accuracy is expected to be slightly worse, but not substantially worse.  Because of the (large) size of the training dataset, we should not expect overfitting.   In particular, random forest models already contain internal cross-validation, and since the validation set is a (20%) subset of the original dataframe, we can expect similar out-of-sample accuracy in the validation &ldquo;20% test&rdquo; set.  </p>
+
+<p>Code Chunk 4
+Random Forest Model</p>
+
+<pre><code class="r"># rpart model
+#rpart_model &lt;- train(classe~.,data=trn,method=&quot;rpart&quot;)
+#rpart_model
+# Random Forests Model
+rf_model &lt;- train(classe~.,data=trn,method=&quot;rf&quot;,importance=TRUE,
+    trControl=trainControl(method=&quot;cv&quot;,number=10))
+rf_model
+</code></pre>
+
+<pre><code>## Random Forest 
+## 
+## 15699 samples
+##    52 predictor
+##     5 classes: &#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39; 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold) 
+## 
+## Summary of sample sizes: 14128, 14130, 14130, 14130, 14128, 14128, ... 
+## 
+## Resampling results across tuning parameters:
+## 
+##   mtry  Accuracy  Kappa  Accuracy SD  Kappa SD
+##    2    0.993     0.992  0.00181      0.00229 
+##   27    0.993     0.992  0.00202      0.00255 
+##   52    0.987     0.984  0.00258      0.00326 
+## 
+## Accuracy was used to select the optimal model using  the largest value.
+## The final value used for the model was mtry = 27.
+</code></pre>
+
+<pre><code class="r">rf_model$finalModel
+</code></pre>
+
+<pre><code>## 
+## Call:
+##  randomForest(x = x, y = y, mtry = param$mtry, importance = TRUE) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 27
+## 
+##         OOB estimate of  error rate: 0.55%
+## Confusion matrix:
+##      A    B    C    D    E  class.error
+## A 4460    2    1    0    1 0.0008960573
+## B   23 3009    6    0    0 0.0095457538
+## C    0   11 2719    8    0 0.0069393718
+## D    0    0   22 2551    0 0.0085503304
+## E    0    0    4    8 2874 0.0041580042
+</code></pre>
+
+<pre><code class="r">plot(rf_model)
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-4"/> </p>
+
+<pre><code class="r">rf_predict &lt;- predict(rf_model,tst)
+confusionMatrix(rf_predict,tst$classe)
+</code></pre>
+
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 1116    3    0    0    0
+##          B    0  753    0    0    0
+##          C    0    3  682    6    1
+##          D    0    0    2  636    1
+##          E    0    0    0    1  719
+## 
+## Overall Statistics
+##                                           
+##                Accuracy : 0.9957          
+##                  95% CI : (0.9931, 0.9975)
+##     No Information Rate : 0.2845          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.9945          
+##  Mcnemar&#39;s Test P-Value : NA              
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity            1.0000   0.9921   0.9971   0.9891   0.9972
+## Specificity            0.9989   1.0000   0.9969   0.9991   0.9997
+## Pos Pred Value         0.9973   1.0000   0.9855   0.9953   0.9986
+## Neg Pred Value         1.0000   0.9981   0.9994   0.9979   0.9994
+## Prevalence             0.2845   0.1935   0.1744   0.1639   0.1838
+## Detection Rate         0.2845   0.1919   0.1738   0.1621   0.1833
+## Detection Prevalence   0.2852   0.1919   0.1764   0.1629   0.1835
+## Balanced Accuracy      0.9995   0.9960   0.9970   0.9941   0.9985
+</code></pre>
+
+<h2>Results</h2>
+
+<p>The predictive (out of sample) validation accuracy for dataframe tst is 0.9926, only slightly worse than the in-sample accuracy.  The out-of-sample confidence interval is 0.9894 to 0.995.  Thus, it is expected that this random forest model can be applied to predicting the exercise type (A-E) of the 20 observations from the file separate file pml-testing.csv.  </p>
+
+<h2>Other Models Considered</h2>
+
+<p>Models constructed using methods other than random forest method were considered.  </p>
+
+<p>An rpart model provided only 0.5 accuracy (in-sample and out-of-sample).  With the rpart model, all of the D tst dataframe data was misclassified by the prediction.  The lda method resulted in an accuracy of 0.7.  For brevity, the code and results for these are not shown here.</p>
+
+<p>A model was trained using the gbm method.  This code runs for a while, but produces a model whose in-sample accuracy for dataframe trn is 0.959.  Nice, but not as impressive as the random forests model.  The out-of-sample accuracy is 0.9526, slightly worse than the in-sample accuracy, with a 95% confidence interval spanning from 0.9561 to 0.9683.  </p>
+
+<p>Code Chunk 5
+gbm model</p>
+
+<pre><code class="r">#code is commented out for faster knitter run... this may take up to 1 hour to run!
+#gbm_model &lt;- train(classe~.,data=trn,method=&quot;gbm&quot;)
+#gbm_model  
+#summary(gbm_model)
+#gbm_pred &lt;- predict(gbm_model,tst)
+#confusionMatrix(gbm_pred,tst$classe)
+# best accuracy is 0.959 (in-sample training accuracy).  
+# The final values used for the model were n.trees = 150, interaction.depth = 3 and shrinkage = 0.1.
+</code></pre>
+
+<h1>Improving Accuracy</h1>
+
+<p>The best way to improve accuracy is possibly eliminating NA, blank and DIV/0 entries in the collection of data.  If all columns of numeric data were present, an improved random forest model could better predict the exercise type of another dataframe.  In this study, only about 1/3 of the columns of the raw data are utilized for generating the random forest predictive model.</p>
+
+<p>Predictive accuracy could be further improved by doing a &ldquo;deep dive&rdquo; to consider those data which were falsely categorized into the wrong exercise types.  In particular, about half of the misclassified training data, in this work, is the 41 occurances of &ldquo;D&rdquo; misclassified as &ldquo;C&rdquo;.   It may be possible to eliminate outliers, use moving averages to reduce noise, or perhaps determine improved placement of accelerometers or settings for accelerometers.  By examining the misclassified data points, it may also be possible to generate new variables which are classifiable with higher accuracy.</p>
+
+<p>##Executive Summary</p>
+
+<p>A random forest predictive model is capable of predicting exercise type (A-E) with a 99.26% accuracy on a validation (out of sample) data set.  The random forest accuracy is the higher than those of other types of models, including rpart, lda, and gbm which provides the second highest accuracy.  The random forest model is applied to classifying 20 out of 20 exercise types correctly.</p>
+
+<h1>Appendix:  Predict and Submit Answers to Coursera for pml-testing.csv dataframe pml_tst</h1>
+
+<pre><code class="r"># code commented out for knitting
+#answers &lt;- as.character(predict(rf_model, pml_tst))
+#pml_write_files = function(x){
+#  n = length(x)
+#  for(i in 1:n){
+#    filename = paste0(&quot;problem_id_&quot;,i,&quot;.txt&quot;)
+#    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+#  }
+#}
+#pml_write_files(answers)
+</code></pre>
+
+<p>Please note that the random forest model predicted 20/20 of the exercise motions (A-E) correctly.</p>
+
+</body>
+
+</html>

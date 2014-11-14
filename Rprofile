@@ -140,3 +140,4 @@ local({
     tests_startup <- Sys.getenv("R_TESTS")
     if(nzchar(tests_startup)) source(tests_startup)
 })
+options(rpubs.upload.method = "internal")
