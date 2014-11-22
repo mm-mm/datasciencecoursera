@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Match 5 Numbers by Reducing Error</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Match 5 Numbers by Reducing Error">
+  <meta name="author" content="Mark Mueller">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Match 5 Numbers by Reducing Error</h1>
+    <h2>Shiny App written in R</h2>
+    <p>Mark Mueller<br/>Developing Data Products  --  Data Science series, Johns Hopkins/Coursera</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Match Five Numbers Shiny App</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Introduction: 
+This app utilizes Shiny and is written in R.  The user guesses (calculates) five numbers from 1 to 99.  The only hint offered to the user is the error =  sum of the differences (computer&#39;s number minus user&#39;s number) squared.  This score is plotted vs. updates as shown:</p>
+
+<p>Code Chunk #1, Score Plot
+<img src="figure/unnamed-chunk-1-1.png" alt="plot of chunk unnamed-chunk-1"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Running the App</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The app uses five sliders for obtaining input of five numbers from 1 to 99 from the user.  When the user has selected a set of five numbers, he or she can press the Update button in order to see if the error (or score) has either increased or decreased.  If the user adjusts a slider and the new number has a lower error, the number is closer to the computer&#39;s number!  On the other hand, if the new number produces a higher error, the user is moving in the wrong direction.</p>
+
+<p>By probing around and guessing numbers with a bit of strategy, it is possible to get the score down to zero in about 40+ tries.  Without a strategy and just guessing, the sky&#39;s the limit.  It is mathematically possible to calculate and update to obtain a zero score in only 10 updates!</p>
+
+<p>The app (ui.R and server.R code, with supporting documentation) can be found at:
+               <a href="https://github.com/mm-mm/datasciencecoursera">https://github.com/mm-mm/datasciencecoursera</a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Tricks for Mathematicians and Hackers</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>A mathematical user will appreciate that the error is simply a parabola of the form y=(x-x0)<sup>2</sup> where x is a vector of length 5.  A simple optimization problem!  The mathematician can see the error and the change in error resulting my incrementing one of the sliders (by one), and the resulting change in error reveals the computer&#39;s number using the formula x0 = x-(deltaerror-1)/2.  (A REAL mathematician can derive this!)</p>
+
+<p>Therefore, you can &quot;guess&quot; the computer&#39;s numbers in 2x5 = 10 iterations of the Update button. </p>
+
+<p>Are you telepathic?  Perhaps you can beat the minimum of 10?  Or perhaps you are a hacker and can set.seed in the R console and establish repeatability of &quot;random&quot; numbers so you can appear telepathic to unknowing friends!</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Code Details</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The app uses five sliders and one goButton.  The &quot;number of tries&quot; is just the output of the goButton which increments each time it is pushed.  In order to prevent the score from updating in real time when the sliders are moved, it is necessary to use isolate() inside of the renderText({}) and other output functions.</p>
+
+<p>Five random numbers 1 to 99 are generated, then the score is computed from the sum of differences squared.  </p>
+
+<p>In order to plot the sequence of scores resulting from the tries, it is necessary to compute the error inside of an isolate() in an render-type function, while utilizing global variables, in order to preserve x&#39;s and y&#39;s for the next updated plot.  In shiny, variables computed inside of isolate() can be made global using &lt;&lt;- instead of &lt;- for assignment.  The use of global variables is critical for this particular app.</p>
+
+<p>This game-like app shows how (in a guessing mode) it is possible to jump over a minimum while increasing or decreasing with too large a delta-x.  On the other hand, small changes will require many iterations before reaching the minimum for a given slider.  This is similar to the much more complicated case of machine learning gradient descent type learning rates.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Match Five Numbers Shiny App'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Running the App'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Tricks for Mathematicians and Hackers'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Code Details'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
